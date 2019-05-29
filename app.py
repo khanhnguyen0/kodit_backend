@@ -26,7 +26,7 @@ def get_cluster(cluster_id=None):
 
 @app.route("/cluster/ids/", methods=["GET"])
 def get_cluster_ids():
-    ids = list(DF["cluster"].unique())
+    ids =[int(x) for x in  DF["cluster"].unique().tolist()]
     return jsonify({"ids": ids})
 
 
