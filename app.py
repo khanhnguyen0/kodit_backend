@@ -38,11 +38,13 @@ def get_cluster(cluster_id=None):
 @app.route("/cluster/ids/", methods=["GET"])
 def get_cluster_ids():
     ids = [int(x) for x in DF["cluster"].unique().tolist()]
-    return jsonify({"ids": ids})
+    return jsonify({"ids": sorted(ids)})
+
 
 @app.route("/", methods=["GET"])
 def serve():
     return render_template("index.html")
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=False)
