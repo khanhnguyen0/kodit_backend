@@ -15,5 +15,4 @@ RUN apt-get update && \
 COPY requirements.txt /app/requirements.txt
 RUN pip3 install -r requirements.txt
 COPY . /app
-ENTRYPOINT ["gunicorn"]
-CMD ["app:app","--threads","2","-b",":$PORT"]
+CMD gunicorn app:app --threads 2 --bind 0.0.0.0:$PORT 
