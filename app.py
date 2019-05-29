@@ -1,4 +1,5 @@
 import json
+import ast
 import pandas as pd
 
 from flask import Flask, jsonify
@@ -8,6 +9,9 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app, origin=["*"])
 DF = pd.read_csv("./grouped_dataset.csv")
+DF["living_area_sqm"] = DF["living_area_sqm"].apply(lambda x: ast.literal_eval(x))
+DF["price"] = DF["price"].apply(lambda x: ast.literal_eval(x))
+DF["price_sqm"] = DF["price_sqm"].apply(lambda x: ast.literal_eval(x))
 
 
 @app.route("/cluster/", methods=["GET"])
@@ -18,15 +22,17 @@ def get_cluster(cluster_id=None):
         records_json = DF.to_json(orient="records")
         return jsonify({"records": json.loads(records_json)})
     records = DF.loc[DF["cluster"] == int(cluster_id)]
+    print(records["price_sqm"].values)
     if len(records) > 0:
         records_json = records.to_json(orient="records")
+        print(json.loads(records_json)[0])
         return jsonify({"records": json.loads(records_json)})
     return "cluster not found", 404
 
 
 @app.route("/cluster/ids/", methods=["GET"])
 def get_cluster_ids():
-    ids =[int(x) for x in  DF["cluster"].unique().tolist()]
+    ids = [int(x) for x in DF["cluster"].unique().tolist()]
     return jsonify({"ids": ids})
 
 
