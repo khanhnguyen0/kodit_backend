@@ -2,11 +2,16 @@ import json
 import ast
 import pandas as pd
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_folder="./build/static",
+    template_folder="./build",
+    static_url_path="/static",
+)
 CORS(app, origin=["*"])
 DF = pd.read_csv("./grouped_dataset.csv")
 DF["living_area_sqm"] = DF["living_area_sqm"].apply(lambda x: ast.literal_eval(x))
@@ -35,6 +40,9 @@ def get_cluster_ids():
     ids = [int(x) for x in DF["cluster"].unique().tolist()]
     return jsonify({"ids": ids})
 
+@app.route("/", methods=["GET"])
+def serve():
+    return render_template("index.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=False)
